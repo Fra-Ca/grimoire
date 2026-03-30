@@ -44,3 +44,5 @@ case "$selected" in
 2) bash ~/athanor/grimoire/protocols/grimoire.sh ;;
 3) bash ~/athanor/grimoire/protocols/sanctum.sh ;;
 esac
+
+#sleep 0.5
