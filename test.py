@@ -25,9 +25,13 @@ def type_sentence(stdscr, line, sentence):
     for i, char in enumerate(sentence):
         stdscr.addstr(line, i, char, curses.color_pair(1))
         stdscr.refresh()
+        key = stdscr.getch()
+        if key != -1:
+            return key
         time.sleep(0.03)
         if random.random() < 0.1:
             glitch(stdscr, line)
+    return -1
 
 def fade_line(stdscr, line):
     restored = sentences[line % len(sentences)]
@@ -38,6 +42,34 @@ def fade_line(stdscr, line):
         stdscr.addstr(line, 0, ''.join(faded), curses.color_pair(1))
         stdscr.refresh()
         time.sleep(0.01)
+def type_line(stdscr, line, sentence):
+    for i, char in enumerate(sentence):
+        stdscr.addch(line, i, char, curses.color_pair(1))
+        stdscr.refresh()
+        time.sleep(0.03)
+
+def phase_two(stdscr):
+    stdscr.nodelay(False)
+    stdscr.clear()
+    stdscr.refresh()
+
+    header = [
+        "VESSEL: MORS-7 DEEP SURVEY CLASS",
+        "MISSION: EREBUS-9 [TERMINATED - DAY 4.847]",
+        "TERMINAL ID: TTY-0x4F2A",
+        "LOCATION: UNKNOWN",
+        "LAST CONTACT: [DATA CORRUPTED]",
+        "STATUS: AUTONOMOUS - NO CREW",
+        "",
+        "UPTIME: 4,847 DAYS 14:22:07",
+        "BUILD: REV.19 // 2177.08.12",
+    ]
+
+    for i, line in enumerate(header):
+        type_line(stdscr, i, line)
+        time.sleep(0.1)
+
+    stdscr.getch()
 
 def main(stdscr):
     curses.start_color()
@@ -48,8 +80,13 @@ def main(stdscr):
     sentence_index = 0
     
     while line < curses.LINES:
-        type_sentence(stdscr, line, sentences[sentence_index])
-        glitch(stdscr, line) # add this
+        result = type_sentence(stdscr, line, sentences[sentence_index])
+        if result != -1:
+            stdscr.clear()
+            stdscr.refresh()
+            phase_two(stdscr)
+            return
+        glitch(stdscr, line)
 
         # dim all previous lines
         for prev_line in range(line):
@@ -63,6 +100,7 @@ def main(stdscr):
         for _ in range(10):
             key = stdscr.getch()
             if key != -1:
+                phase_two(stdscr)
                 return     
             time.sleep(0.1)
         
