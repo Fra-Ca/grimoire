@@ -51,6 +51,45 @@ def type_line(stdscr, line, sentence):
         stdscr.refresh()
         time.sleep(0.03)
 
+def deus_reaction(stdscr, row):
+    stdscr.addstr(row, 0, "...After all this time.", curses.color_pair(1))
+    stdscr.refresh()
+    time.sleep(1.5)
+
+    # glitch between hope and no hope
+    hope_line = "there is no hope."
+    hope_line_alt = "there is still hope."
+
+    # chaotic glitch
+    for _ in range(20):
+        choice = random.random()
+        if choice < 0.4:
+            text = hope_line
+        elif choice < 0.7:
+            text = hope_line_alt
+        else:
+            text = ''.join(random.choice('!@#$%^&*><[]{}|~') for _ in range(20))
+
+        stdscr.addstr(row + 2, 0, text.ljust(30), curses.color_pair(1))
+        stdscr.refresh()
+        time.sleep(0.08)
+
+    # settle on hope with occasional flicker
+    for _ in range(10):
+        stdscr.addstr(row + 2, 0, "there is still hope.", curses.color_pair(1))
+        stdscr.refresh()
+        time.sleep(0.2)
+        if random.random() < 0.3:
+            noise = ''.join(random.choice('!@#$%^&*><[]{}|~') for _ in range(20))
+            stdscr.addstr(row + 2, 0, noise.ljust(30), curses.color_pair(1))
+            stdscr.refresh()
+            time.sleep(0.05)
+
+    # settle on hope
+    stdscr.addstr(row + 2, 0, "there is still hope.", curses.color_pair(1))
+    stdscr.refresh()
+    time.sleep(2)
+
 def phase_two(stdscr):
     stdscr.nodelay(False)
     stdscr.clear()
@@ -80,6 +119,23 @@ def phase_two(stdscr):
     for i, line in enumerate(header):
         type_line(stdscr, i, line)
         time.sleep(0.1)
+
+    # blank line then prompt
+    prompt_row = len(header) + 1
+    stdscr.addstr(prompt_row, 0, ">", curses.color_pair(1))
+    stdscr.refresh()
+
+    #capture input
+    curses.echo()
+    passphrase = stdscr.getstr(prompt_row, 2, 50).decode()
+    curses.noecho()
+
+    if passphrase.lower() == "ignite the spark from within":
+        deus_reaction(stdscr, prompt_row + 2)
+    else:
+        stdscr.addstr(prompt_row + 2, 0, "...", curses.color_pair(1))
+        stdscr.refresh()
+        time.sleep(1)
 
     stdscr.getch()
 
