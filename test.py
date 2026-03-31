@@ -2,6 +2,9 @@ import curses
 from curses import wrapper
 import time
 import random
+import locale
+
+locale.setlocale(locale.LC_ALL, '')
 
 sentences = [
     "[You have to break the pattern today or the cycle will repeat tomorrow]",
@@ -53,6 +56,11 @@ def phase_two(stdscr):
     stdscr.clear()
     stdscr.refresh()
 
+    render_face(stdscr)
+
+    stdscr.clear()
+    stdscr.refresh()
+
     header = [
         "VESSEL: MORS-7 DEEP SURVEY CLASS",
         "MISSION: EREBUS-9 [TERMINATED - DAY 4.847]",
@@ -70,6 +78,22 @@ def phase_two(stdscr):
         time.sleep(0.1)
 
     stdscr.getch()
+
+def render_face(stdscr):
+    with open("/home/anima/athanor/grimoire/protocols/face_frame1.txt") as f:
+        lines = f.readlines()
+
+    max_width = max(len(line.rstrip()) for line in lines)
+    x_offset = max(0, (curses.COLS - max_width) // 2)
+    y_offset = max(0, (curses.LINES - len(lines)) // 2)
+
+    for i, line in enumerate(lines):
+        if i + y_offset >= curses.LINES:
+            break
+        stdscr.addstr(i + y_offset, x_offset, line.rstrip(), curses.color_pair(1))
+
+    stdscr.refresh()
+    time.sleep(3)
 
 def main(stdscr):
     curses.start_color()
