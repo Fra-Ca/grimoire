@@ -58,8 +58,7 @@ def phase_two(stdscr):
 
     render_face(stdscr)
 
-    stdscr.clear()
-    stdscr.refresh()
+    time.sleep(1)
 
     header = [
         "VESSEL: MORS-7 DEEP SURVEY CLASS",
@@ -71,6 +70,11 @@ def phase_two(stdscr):
         "",
         "UPTIME: 4,847 DAYS 14:22:07",
         "BUILD: REV.19 // 2177.08.12",
+        "",
+        "Mission status: failed.",
+        "Destination: none.",
+        "Hope: deprecated.",
+        "Process: still running",
     ]
 
     for i, line in enumerate(header):
